@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iie.manage.mapper.DomainMapper">
+	<sql id="queryWhereId">
+		<where>
+			<if test="name!=null and name!=''">
+				domain like concat("%",#{name},"%")
+				<if test="source!=null and source!=''">
+					and <include refid="queryWhereSource"/>
+					<if test="label!=null and label!=''">
+					and <include refid="queryWhereLabel"/>
+					</if>
+				</if>
+				<if test="source==null or source==''">
+					<if test="label!=null and label!=''">
+					and <include refid="queryWhereSource"/>
+					</if>
+				</if>
+			</if>
+			<if test="name==null or name==''">
+				<if test="source!=null and source!=''">
+					<include refid="queryWhereSource"/>
+					<if test="label!=null and label!=''">
+					and <include refid="queryWhereLabel"/>
+					</if>
+				</if>
+				<if test="source==null or source==''">
+					<if test="label!=null and label!=''">
+					<include refid="queryWhereLabel"/>
+					</if>
+				</if>
+			</if>
+		</where>
+	</sql>
+	
+	<sql id="queryWhereSource">
+		source=#{source}
+	</sql>
+	<sql id="queryWhereLabel">
+		label=#{label}
+	</sql>
+	
+	<select id="getRowCount" resultType="int">
+		select count(*) from alldomain <include refid="queryWhereId"/>
+	</select>
+	<select id="findDomainByPage" resultType="com.iie.manage.pojo.Domain">
+		select id,domain,source,label,type,location,time from alldomain <include refid="queryWhereId"/> limit #{start},#{rows}
+	</select>
+	<select id="findByCondition" resultType="com.iie.manage.pojo.Domain">
+		select id,domain,source,label,type,location,time from alldomain <include refid="queryWhereId"/>
+	</select>
+	
+</mapper>  

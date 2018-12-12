@@ -1,0 +1,133 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd 
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd">
+
+	<!--配置包扫描 如果是单个项目需要定位到具体的service 如果是多个项目，需要都进行包扫描 所以写的范围较大 -->
+	<context:component-scan base-package="com.iie" />
+
+
+	<!--引入外部配置文件 由于后期可能会引入多个配置文件 所以采用list的形式 -->
+	<bean id="propertyPlaceholder"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:/property/jdbc.properties</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+		<property name="driverClassName" value="${jdbc.driverClassName}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+	</bean>
+
+	<!--配置声明式事务处理的步骤 1.配置事物管理器 2.定义事物事物通知 3.配置事物切面 -->
+	<!--定义事务管理器 -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<!--配置数据源 -->
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<!--定义事务通知 -->
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<!--定义读数据的方法 -->
+			<tx:method name="find*" propagation="SUPPORTS" read-only="true" />
+			<tx:method name="select*" propagation="SUPPORTS" read-only="true" />
+			<tx:method name="query*" propagation="SUPPORTS" read-only="true" />
+
+			<!--更新数据库操作 -->
+			<tx:method name="save*" propagation="REQUIRED" />
+			<tx:method name="delete*" propagation="REQUIRED" />
+			<tx:method name="update*" propagation="REQUIRED" />
+
+			<!--其他方法 -->
+			<tx:method name="*" propagation="SUPPORTS" read-only="true" />
+		</tx:attributes>
+	</tx:advice>
+
+	<!--配置事物切面 -->
+	<aop:config>
+		<aop:pointcut expression="execution(* com.iie.manage.service..*.*(..))"
+			id="pc" />
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="pc" />
+	</aop:config>
+	
+	<!-- 配置shiro框架-->
+	
+	<!-- 配置realm对象(将给spring管理) -->
+	<bean id="userRealm" 
+	        class="com.iie.sys.service.realm.ShiroUserRealm">
+	    <!-- 凭证匹配器(密码加密) -->
+	    <property name="credentialsMatcher">
+    		<bean class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+    			<property name="hashAlgorithmName" value="MD5"/>
+    			<!-- <property name="hashIterations" value="1024"/> -->
+    		</bean>
+    	</property>
+	</bean>
+	
+	<!-- 配置CacheManager对象(不是必须的,主要是为了提高性能,可以对认证信息以及授权信息进行缓存) -->
+    <bean id="cacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
+        <!-- Set a net.sf.ehcache.CacheManager instance here if you already have one.  If not, a new one
+             will be creaed with a default config:
+             <property name="cacheManager" ref="ehCacheManager"/> -->
+        <!-- If you don't have a pre-built net.sf.ehcache.CacheManager instance to inject, but you want
+             a specific Ehcache configuration to be used, specify that here.  If you don't, a default
+             will be used.: -->
+        <property name="cacheManagerConfigFile" value="classpath:ehcache.xml"/> 
+    </bean>
+    
+	<!-- 配置securityManager对象(此对象时shiro框架核心) -->
+	<bean id="securityManager" 
+	   class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+	    <property name="realm" ref="userRealm"/> 
+	    <property name="cacheManager" ref="cacheManager"/>  
+	</bean>
+	
+	<!-- 配置ShiroFilter(通过此filter的配置实现对请求资源的过滤,哪些请求要放行,哪些要认证)-->
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+         <!-- shiro的核心安全接口 -->
+         <property name="securityManager" ref="securityManager"/>
+         <!-- 要求登录时的连接 -->
+         <property name="loginUrl" value="/loginUI"></property>
+         <!-- 登录成功后要跳转的连接(此处已经在登录中处理了) -->
+         <!-- <property name="successUrl" value="/index.jsp"></property> -->
+         <!-- 访问未对其授权的资源时,要跳转的连接  -->
+         <!-- <property name="unauthorizedUrl" value="/login"></property> -->
+         <!-- shiro连接约束配置 -->
+         <property name="filterChainDefinitions">
+             <value>
+              	/css/** = anon
+                 /img/** = anon
+                 /js/** = anon
+                 <!-- 退出 -->
+                 /doLogout.do = logout  <!-- 会调用Subject的logout方法,此方法会将session清空 -->
+                 <!-- 剩余其他路径，必须认证通过才可以访问 -->
+                 /** = authc
+             </value>
+         </property>
+     </bean>
+     
+    <!--Shiro生命周期处理器-->
+	<bean id="lifecycleBeanPostProcessor" 
+	class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
+	
+	<!--启用shiro注解权限检查(@RequestPermissions)-->
+	<bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
+	    depends-on="lifecycleBeanPostProcessor"/>
+	<bean  class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+	    <property name="securityManager" ref="securityManager"/>
+	</bean>
+	<aop:aspectj-autoproxy/>
+</beans>
