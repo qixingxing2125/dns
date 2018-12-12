@@ -1,0 +1,91 @@
+<div Style="margin: 0px; padding: 5px; float: left;">
+	数据来源： <input id="source" name="dept" value="请选择">
+</div>
+<div Style="margin: 0px; padding: 5px">
+	标签： <input id="label" name="dept" value="请选择">
+</div>
+<table class="easyui-datagrid" id="domainList" title="域名列表"
+	data-options="singleSelect:false,collapsible:true,pagination:true,url:'domain/query',method:'post',pageSize:20,toolbar:toolbar">
+	<thead>
+		<tr>
+			<th data-options="field:'ck',checkbox:true"></th>
+			<th data-options="field:'id',width:80,align:'center'">序号</th>
+			<th data-options="field:'domain',width:450,align:'center'">域名</th>
+			<th data-options="field:'source',width:150,align:'center'">数据来源</th>
+			<th data-options="field:'label',width:200,align:'center'">标签</th>
+			<th data-options="field:'type',width:100,align:'center'">类型</th>
+			<th data-options="field:'location',width:100,align:'center'">位置</th>
+			<th data-options="field:'time',width:200,align:'center'">时间</th>
+		</tr>
+	</thead>
+</table>
+<script>
+	$('#source').combobox({
+		url : 'source/category',
+		valueField : 'id',
+		textField : 'text',
+	});
+	$('#label').combobox({
+		url : 'label/category',
+		valueField : 'id',
+		textField : 'text',
+	});
+	function getSelectionsIds() {
+		var domainList = $("#domainList");
+		var sels = domainList.datagrid("getSelections");
+		var ids = [];
+		for ( var i in sels) {
+			ids.push(sels[i].id);
+		}
+		ids = ids.join(",");
+		return ids;
+	}
+
+	var toolbar = [
+			{
+				text : '下载',
+				iconCls : 'icon-save',
+				handler : function() {
+					var ids = getSelectionsIds();
+					if (ids.length == 0) {
+						$.messager.alert('提示', '未选择');
+						return;
+					} else {
+						window.location.href = "domain/download?ids=" + ids;
+					}
+					;
+				}
+			},
+			'-',
+			{
+				text : '全部下载',
+				iconCls : 'icon-save',
+				handler : function() {
+					window.location.href = "domain/downloadall"
+				}
+			},
+			'-',
+			{
+				text : '添加',
+				iconCls : 'icon-add',
+			},
+			'-',
+			{
+				text : '<input type="text" class="input-domain" placeholder="请输入域名关键字"/>'
+			}, {
+				text : '搜索',
+				iconCls : 'icon-search',
+				handler : function() {
+					var source = $('#source').combobox('getText');
+					var label = $('#label').combobox('getText');
+					var domainname = $('.input-domain').val();
+					$('#domainList').datagrid({
+						queryParams : {
+							source : source,
+							label : label,
+							name : domainname
+						}
+					});
+				}
+			} ];
+</script>

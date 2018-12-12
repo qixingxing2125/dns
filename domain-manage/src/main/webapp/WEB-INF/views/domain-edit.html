@@ -1,0 +1,54 @@
+<div style="padding:10px 10px 10px 10px">
+	<form id="domainEditForm" class="domainForm" method="post">
+		<input type="hidden" name="id"/>
+	    <table cellpadding="5">
+	        <tr>
+	            <td>域名:</td>
+	            <td><input class="easyui-textbox" type="text" name="domain" data-options="required:true" style="width: 280px;"></input></td>
+	        </tr>
+	        <tr>
+	            <td>数据来源:</td>
+	            <td><input class="easyui-textbox" type="text" name="source" data-options="required:true" style="width: 280px;"></input></td>
+	        </tr>
+	        <tr>
+	            <td>标签:</td>
+	            <td><input class="easyui-textbox" type="text" name="label" data-options="" style="width: 280px;"></input></td>
+	        </tr>
+	        <tr>
+	            <td>类型:</td>
+	            <td><input class="easyui-combobox" type="text" name="type" data-options="required:true,valueField:'label',textField:'value',data:[{label:'域名',value:'域名'},{label:'url',value:'url'},{label:'ip',value:'ip'},{label:'md5',value:'md5'}]" style="width: 280px;"></input></td>
+	        </tr>
+	        <tr>
+	            <td>位置:</td>
+	            <td><input class="easyui-textbox" type="text" name="location" data-options="" style="width: 280px;"></input></td>
+	        </tr>
+	        <tr>
+	            <td>发现时间:</td>
+	            <td><input class="easyui-textbox" type="text" name="time" data-options="" style="width: 280px;"></input></td>
+	        </tr>
+	    </table>
+	</form>
+	<div style="padding:5px">
+	    <a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitForm()">提交</a>
+	</div>
+</div>
+<script type="text/javascript">
+	
+	function submitForm(){
+		if(!$('#domainEditForm').form('validate')){
+			$.messager.alert('提示','表单还未填写完成!');
+			return;
+		}
+		
+		$.post("/domain/update",$("#domainEditForm").serialize(), function(data){
+			if(data.status == 200){
+				$.messager.alert('提示','修改域名成功!','info',function(){
+					$("#domainEditWindow").window('close');
+					$("#domainList").datagrid("reload");
+				});
+			}else{
+				$.message.alert("提示",data.msg);
+			}
+		});
+	}
+</script>
