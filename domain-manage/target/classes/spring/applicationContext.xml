@@ -1,7 +1,11 @@
-<beans xmlns="http://www.springframework.org/schema/beans"
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
 	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
-	xmlns:util="http://www.springframework.org/schema/util" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
 	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
 	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
@@ -67,7 +71,7 @@
 	
 	<!-- 配置realm对象(将给spring管理) -->
 	<bean id="userRealm" 
-	        class="com.iie.sys.service.realm.ShiroUserRealm">
+	        class="com.iie.common.service.impl.ShiroUserRealm">
 	    <!-- 凭证匹配器(密码加密) -->
 	    <property name="credentialsMatcher">
     		<bean class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
@@ -100,19 +104,21 @@
          <!-- shiro的核心安全接口 -->
          <property name="securityManager" ref="securityManager"/>
          <!-- 要求登录时的连接 -->
-         <property name="loginUrl" value="/loginUI"></property>
+         <property name="loginUrl" value="/login"></property>
          <!-- 登录成功后要跳转的连接(此处已经在登录中处理了) -->
          <!-- <property name="successUrl" value="/index.jsp"></property> -->
-         <!-- 访问未对其授权的资源时,要跳转的连接  -->
-         <!-- <property name="unauthorizedUrl" value="/login"></property> -->
+         <!-- 访问未对其授权的资源时,要跳转的连接 
+         <property name="unauthorizedUrl" value="/default.html"></property>-->
          <!-- shiro连接约束配置 -->
          <property name="filterChainDefinitions">
              <value>
-              	/css/** = anon
+                 <!-- 对静态资源设置允许匿名访问 -->
+                 /css/** = anon
                  /img/** = anon
                  /js/** = anon
+                 /login = anon
                  <!-- 退出 -->
-                 /doLogout.do = logout  <!-- 会调用Subject的logout方法,此方法会将session清空 -->
+                 <!-- /doLogout.do = logout -->  <!-- 会调用Subject的logout方法,此方法会将session清空 -->
                  <!-- 剩余其他路径，必须认证通过才可以访问 -->
                  /** = authc
              </value>

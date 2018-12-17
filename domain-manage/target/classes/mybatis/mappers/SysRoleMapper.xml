@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iie.manage.mapper.SysRoleMapper">
+
+	<sql id="queryWhereName">
+		<where>
+			<if test="name!=null and name!=''">
+				name like concat("%",#{name},"%")
+			</if>
+		</where>
+	</sql>
+
+	<select id="findRoleByPage" resultType="com.iie.manage.pojo.SysRole">
+		select * from sys_roles <include refid="queryWhereName"/>
+	</select>
+
+	<select id="getRowCount" resultType="int">
+		select count(*) from sys_roles
+		<include refid="queryWhereName" />
+	</select>
+	
+	<select id="queryRoleName" resultType="string">
+		select name from sys_roles where id=#{roleId}
+	</select>
+</mapper>
+
+
+

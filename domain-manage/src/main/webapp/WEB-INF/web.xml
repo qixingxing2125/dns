@@ -2,22 +2,47 @@
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns="http://java.sun.com/xml/ns/javaee"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-	id="jt-manage" version="2.5">
+	version="2.5">
 	<display-name>domain-manage</display-name>
-	<!-- 配置Shiro安全过滤器 -->
+	<!--定义POST乱码解决 -->
 	<filter>
-		<filter-name>DelegatingFilterProxy</filter-name>
-		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-		<!-- 初始化参数 -->
+		<filter-name>characterEncoding</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<!--定义初始化参数 -->
 		<init-param>
-			<param-name>targetBeanName</param-name>
-			<param-value>shiroFilter</param-value>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
 		</init-param>
 	</filter>
 	<filter-mapping>
-		<filter-name>DelegatingFilterProxy</filter-name>
-		<url-pattern>/</url-pattern>
+		<filter-name>characterEncoding</filter-name>
+		<url-pattern>/*</url-pattern>
 	</filter-mapping>
+	<!-- 配置Shiro安全过滤器 -->
+	<filter>
+		<filter-name>shiro</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+		<!-- 初始化参数 -->
+		<init-param>
+			<param-name>targetFilterLifecycle</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>shiro</filter-name>
+		<url-pattern>/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+		<dispatcher>INCLUDE</dispatcher>
+		<dispatcher>ERROR</dispatcher>
+	</filter-mapping>
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath:/spring/applicationContext*.xml</param-value>
+	</context-param>
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
 	<!--定义前端控制器 servlet第一次请求时才会加载启动 懒加载的方式 -->
 	<servlet>
 		<servlet-name>springmvc</servlet-name>
@@ -36,25 +61,4 @@
 		<servlet-name>springmvc</servlet-name>
 		<url-pattern>/</url-pattern>
 	</servlet-mapping>
-	<!--定义POST乱码解决 -->
-	<filter>
-		<filter-name>characterEncoding</filter-name>
-		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
-		<!--定义初始化参数 -->
-		<init-param>
-			<param-name>encoding</param-name>
-			<param-value>UTF-8</param-value>
-		</init-param>
-	</filter>
-	<filter-mapping>
-		<filter-name>characterEncoding</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
-	<context-param>
-		<param-name>contextConfigLocation</param-name>
-		<param-value>/spring/applicationContext.xml</param-value>
-	</context-param>
-	<listener>
-		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-	</listener>
 </web-app>

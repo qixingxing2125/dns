@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.iie.common.vo.EasyUIResult;
+import com.iie.common.vo.SysResult;
 import com.iie.manage.pojo.Domain;
 import com.iie.manage.service.DomainService;
-import com.iie.manage.vo.SysResult;
 
 @Controller
 @RequestMapping("/domain")
