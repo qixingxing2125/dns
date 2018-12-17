@@ -7,8 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.iie.common.vo.CategoryResultVo;
 import com.iie.manage.service.SourceDomainService;
-import com.iie.manage.vo.CategoryResultVo;
 
 @Controller
 @RequestMapping("/source")

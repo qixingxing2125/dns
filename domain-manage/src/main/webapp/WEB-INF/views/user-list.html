@@ -1,0 +1,79 @@
+<table class="easyui-datagrid" id="userList" title="用户列表"
+	data-options="singleSelect:false,collapsible:true,pagination:true,url:'user/queryUsers',method:'post',pageSize:20,toolbar:toolbar">
+	<thead>
+		<tr>
+			<th data-options="field:'ck',checkbox:true"></th>
+			<th data-options="field:'id',width:80,align:'center'">ID</th>
+			<th data-options="field:'username',width:200,align:'center'">用户名</th>
+			<th data-options="field:'email',width:150,align:'center'">邮箱</th>
+			<th data-options="field:'mobile',width:200,align:'center'">手机号</th>
+			<th data-options="field:'valid',width:100,align:'center'">状态</th>
+			<th data-options="field:'roleId',width:100,align:'center',formatter:KindEditorUtil.findRoleName">角色</th>
+			<th data-options="field:'createdTime',width:200,align:'center'">创建时间</th>
+			<th data-options="field:'modifiedTime',width:200,align:'center'">修改时间</th>
+		</tr>
+	</thead>
+</table>
+<div id="userEditWindow" class="easyui-window" title="编辑用户" data-options="modal:true,closed:true,iconCls:'icon-save',href:'/page/user-edit'" style="width:80%;height:80%;padding:10px;">
+</div>
+<div id="userAddWindow" class="easyui-window" title="添加用户" data-options="modal:true,closed:true,iconCls:'icon-save',href:'/page/user-add'" style="width:80%;height:80%;padding:10px;">
+</div>
+<script>
+	function getSelectionsIds() {
+		var userList = $("#userList");
+		var sels = userList.datagrid("getSelections");
+		var ids = [];
+		for ( var i in sels) {
+			ids.push(sels[i].id);
+		}
+		ids = ids.join(",");
+		return ids;
+	}
+
+	var toolbar = [
+			{
+				text : '编辑',
+				iconCls : 'icon-edit',
+				handler:function(){
+					var ids = getSelectionsIds();
+		        	if(ids.length == 0){
+		        		$.messager.alert('提示','必须选择一个用户才能编辑!');
+		        		return ;
+		        	}
+		        	if(ids.indexOf(',') > 0){
+		        		$.messager.alert('提示','只能选择一个用户!');
+		        		return ;
+		        	}
+		        	$("#userEditWindow").window({
+		        		onLoad :function(){
+		        			var data = $("#userList").datagrid("getSelections")[0];
+		        			data.password = "";
+		        			$("#userEditForm").form("load",data);
+		        		}
+		        	}).window("open");
+				}
+			},
+			'-',
+			{
+				text : '添加',
+				iconCls : 'icon-add',
+				handler : function() {
+					$("#userAddWindow").window("open");
+				}
+			},
+			'-',
+			{
+				text : '<input type="text" class="input-name" placeholder="搜索"/>'
+			}, {
+				text : '搜索',
+				iconCls : 'icon-search',
+				handler : function() {
+					var name = $(".input-name").val();
+					$("#userList").datagrid({
+						queryParams : {
+							name : name
+						}
+					});
+				}
+			} ];
+</script>
