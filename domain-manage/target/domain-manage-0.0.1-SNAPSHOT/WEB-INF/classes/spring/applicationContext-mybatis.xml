@@ -28,4 +28,5 @@
 		<!--指定包名 为其创建代理对象  -->
 		<property name="basePackage" value="com.iie.manage.mapper"/>
 	</bean>
+	
 </beans>

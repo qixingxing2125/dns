@@ -27,8 +27,6 @@ public class SysUserController {
 	@ResponseBody
 	public SysResult saveUser(SysUser enyity) {
 		try {
-			System.out.println(enyity);
-			System.out.println(enyity.getRoleId());
 			sysUserServcie.saveUser(enyity);
 		} catch (Exception e) {
 			e.printStackTrace();

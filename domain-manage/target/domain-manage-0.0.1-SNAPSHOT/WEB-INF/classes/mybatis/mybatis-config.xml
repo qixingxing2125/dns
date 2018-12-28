@@ -27,4 +27,5 @@
 			<property name="mappers" value="com.iie.common.mapper.SysMapper"/>
 		</plugin>
 	</plugins>
+	
 </configuration>  
