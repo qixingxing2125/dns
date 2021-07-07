@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iie.manage.mapper.SysDomainMapper">
+	<sql id="queryWhereId">
+		<where>
+			<if test="name!=null and name!=''">
+				domain like concat("%",#{name},"%")
+				<if test="sourceId!=0">
+					and <include refid="queryWhereSource"/>
+					<if test="labelId=0">
+					and <include refid="queryWhereLabel"/>
+					</if>
+				</if>
+				<if test="sourceId==0">
+					<if test="labelId!=0">
+					and <include refid="queryWhereSource"/>
+					</if>
+				</if>
+			</if>
+			<if test="name==null or name==''">
+				<if test="sourceId!=0">
+					<include refid="queryWhereSource"/>
+					<if test="labelId!=0">
+					and <include refid="queryWhereLabel"/>
+					</if>
+				</if>
+				<if test="sourceId==0">
+					<if test="labelId!=0">
+					<include refid="queryWhereLabel"/>
+					</if>
+				</if>
+			</if>
+		</where>
+	</sql>
+	
+	<sql id="queryWhereSource">
+		source_id=#{sourceId}
+	</sql>
+	
+	<sql id="queryWhereLabel">
+		label_id=#{labelId}
+	</sql>
+	
+	<select id="getRowCount" resultType="int">
+		select count(*) from sys_domain <include refid="queryWhereId"/>
+	</select>
+	
+	<select id="findDomainByPage" resultType="com.iie.manage.pojo.SysDomain">
+		select id,domain,source_id,label_id,type_id,location,foundtime from sys_domain <include refid="queryWhereId"/> order by foundtime desc limit #{start},#{rows}
+	</select>
+	
+	<select id="findDoaminByCondition" resultType="com.iie.manage.pojo.SysDomain">
+		select id,domain,source_id,label_id,type_id,location,foundtime from sys_domain <include refid="queryWhereId"/> order by foundtime desc
+	</select>
+	
+	<insert id="insertDomain">
+		insert into sys_domain(domain,source_id,label_id,type_id,location,foundtime) values
+		(#{domain},#{sourceId},#{labelId},#{typeId},#{location},#{foundtime})
+	</insert>
+	
+	<select id="findDomainById" resultType="com.iie.manage.pojo.SysDomain">
+		select id,domain,source_id,label_id,type_id,location,foundtime from sys_domain where id=#{id}
+	</select>
+</mapper>
+
+
+

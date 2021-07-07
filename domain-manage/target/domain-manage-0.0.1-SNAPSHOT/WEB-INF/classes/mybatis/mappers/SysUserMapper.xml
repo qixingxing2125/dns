@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iie.manage.mapper.SysUserMapper">
+
+	<select id="findUserByUserName" resultType="com.iie.manage.pojo.SysUser">
+		select * from sys_users where username=#{username}
+	</select>
+
+	<sql id="queryWhereName">
+		<where>
+			<if test="name!=null and name!=''">
+				username like concat("%",#{name},"%")
+			</if>
+		</where>
+	</sql>
+
+	<select id="findUserByPage" resultType="com.iie.manage.pojo.SysUser">
+		select * from sys_users <include refid="queryWhereName"/>
+	</select>
+
+	<select id="getRowCount" resultType="int">
+		select count(*) from sys_users
+		<include refid="queryWhereName" />
+	</select>
+</mapper>
+
+
+

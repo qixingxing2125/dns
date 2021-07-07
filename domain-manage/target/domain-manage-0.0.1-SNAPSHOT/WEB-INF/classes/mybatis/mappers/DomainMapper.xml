@@ -46,7 +46,10 @@
 		select count(*) from alldomain <include refid="queryWhereId"/>
 	</select>
 	<select id="findDomainByPage" resultType="com.iie.manage.pojo.Domain">
-		select * from alldomain <include refid="queryWhereId"/> limit #{start},#{rows}
+		select id,domain,source,label,type,location,time from alldomain <include refid="queryWhereId"/> limit #{start},#{rows}
+	</select>
+	<select id="findByCondition" resultType="com.iie.manage.pojo.Domain">
+		select id,domain,source,label,type,location,time from alldomain <include refid="queryWhereId"/>
 	</select>
 	
 </mapper>  

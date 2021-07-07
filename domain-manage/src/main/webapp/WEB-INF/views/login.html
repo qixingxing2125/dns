@@ -13,63 +13,58 @@
 <link rel="icon" href="/css/favicon.ico">
 </head>
 <body>
-	<div id="particles-js">
-		<div class="login">
-			<div class="login-top">登录</div>
-			<div class="login-center clearfix">
-				<div class="login-center-img">
-					<img src="img/name.png" />
+	<form method="post" id="loginForm">
+		<div id="particles-js">
+			<div class="login">
+				<div class="login-top">登录</div>
+				<div class="login-center clearfix">
+					<div class="login-center-img">
+						<img src="img/name.png" />
+					</div>
+					<div class="login-center-input">
+						<input type="text" id="usernameId" name="username"
+							placeholder="请输入您的用户名" onfocus="this.placeholder=''"
+							onblur="this.placeholder='请输入您的用户名'" />
+						<div class="login-center-input-text">用户名</div>
+					</div>
 				</div>
-				<div class="login-center-input">
-					<input type="text" id="usernameId" name="username" value=""
-						placeholder="请输入您的用户名" onfocus="this.placeholder=''"
-						onblur="this.placeholder='请输入您的用户名'" />
-					<div class="login-center-input-text">用户名</div>
+				<div class="login-center clearfix">
+					<div class="login-center-img">
+						<img src="img/password.png" />
+					</div>
+					<div class="login-center-input">
+						<input type="password" id="passwordId" name="password"
+							placeholder="请输入您的密码" onfocus="this.placeholder=''"
+							onblur="this.placeholder='请输入您的密码'" />
+						<div class="login-center-input-text">密码</div>
+					</div>
 				</div>
+				<div class="login-button" onclick="doLogin()">登录</div>
 			</div>
-			<div class="login-center clearfix">
-				<div class="login-center-img">
-					<img src="img/password.png" />
-				</div>
-				<div class="login-center-input">
-					<input type="password" id="passwordId" name="password" value=""
-						placeholder="请输入您的密码" onfocus="this.placeholder=''"
-						onblur="this.placeholder='请输入您的密码'" />
-					<div class="login-center-input-text">密码</div>
-				</div>
-			</div>
-			<div class="login-button">登录</div>
 		</div>
-		<div class="sk-rotating-plane"></div>
-	</div>
-
+	</form>
 	<!-- scripts -->
 	<script src="js/particles.min.js"></script>
 	<script src="js/jquery-3.3.1.min.js"></script>
 	<script src="js/app.js"></script>
 	<script type="text/javascript">
-		$(function(){
-			$(".login-button").click(doLogin);
-		});
-		
-		function doLogin(){
+		function doLogin() {
 			var params = {
 				username : $("#usernameId").val(),
 				password : $("#passwordId").val()
-			};
+			}
 			console.log(params);
-			var url = "logindo";
-			$.post(url,params,function(result){
-				if(result.state==1){
-					location.href="index?t=" + Math.random();
-				}else{
-					
+			var url = "doLogin";
+			$.post(url, params, function(result) {
+				if (result.state == 1) {
+					//跳转到indexUI对应的页面
+					location.href = "index?t=" + Math.random();
+				} else {
+					alert("密码或者用户名错误,请重新登录");
 				}
 				return false;
 			});
 		}
-		
 	</script>
-	<div style="text-align: center;"></div>
 </body>
 </html>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iie.manage.mapper.SysSourceMapper">
+	
+	<select id="findDomainSource" resultType="com.iie.manage.pojo.SysSource">
+		select * from sys_sources
+	</select>
+	
+	<select id="querySourceName" resultType="string">
+		select name from sys_sources where id=#{sourceId}
+	</select>
+	
+	<select id="findSourceId" resultType="int">
+		select id from sys_sources where name=#{source}
+	</select>
+	
+</mapper>
+
+
+

@@ -1,0 +1,31 @@
+<table class="easyui-datagrid" id="logList" title="日志列表"
+	data-options="singleSelect:false,collapsible:true,pagination:true,url:'log/queryLog',method:'post',pageSize:20,toolbar:toolbar">
+	<thead>
+		<tr>
+			<th data-options="field:'username',width:450,align:'center'">用户名</th>
+			<th data-options="field:'operation',width:150,align:'center'">操作</th>
+			<th data-options="field:'ip',width:200,align:'center'">ip</th>
+			<th data-options="field:'params',width:100,align:'center'">请求参数</th>
+			<th data-options="field:'createdTime',width:100,align:'center'">创建时间</th>
+		</tr>
+	</thead>
+</table>
+<script>
+	var toolbar = [
+			{
+				text : '<input type="text" class="input-domain" placeholder="请输入域名关键字"/>'
+			}, {
+				text : '搜索',
+				iconCls : 'icon-search',
+				handler : function() {
+					var domainname = $('.input-domain').val();
+					$('#logList').datagrid({
+						queryParams : {
+							source : source,
+							label : label,
+							name : domainname
+						}
+					});
+				}
+			} ];
+</script>

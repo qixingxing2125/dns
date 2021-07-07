@@ -1,7 +1,6 @@
 package com.iie.manage.pojo;
 
 import com.iie.common.pojo.BasePojo;
-
 public class SysRole extends BasePojo{
 	private Integer id;
 	private String name;

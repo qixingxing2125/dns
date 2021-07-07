@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iie.manage.mapper.SysTypeMapper">
+	
+	<select id="queryTypeName" resultType="string">
+		select name from sys_types where id=#{typeId}
+	</select>
+	
+	<select id="findDomainType" resultType="com.iie.manage.pojo.SysType">
+		select * from sys_types
+	</select>
+</mapper>
+
+
+

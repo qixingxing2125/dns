@@ -1,37 +1,29 @@
 <div Style="margin: 0px; padding: 5px; float: left;">
-	数据来源： <input id="source" name="dept" value="请选择">
+	数据来源： <input id="source" name="sourceId" class="easyui-combobox" data-options="url:'source/category',method:'get',valueField:'id',
+			textField:'text'">
 </div>
 <div Style="margin: 0px; padding: 5px">
-	标签： <input id="label" name="dept" value="请选择">
+	标签： <input id="label" name="labelId" class="easyui-combobox" data-options="url:'label/category',method:'get',valueField:'id',
+			textField:'text'">
 </div>
 <table class="easyui-datagrid" id="domainList" title="域名列表"
-	data-options="singleSelect:false,collapsible:true,pagination:true,url:'domain/query',method:'post',pageSize:20,toolbar:toolbar">
+	data-options="singleSelect:false,collapsible:true,pagination:true,url:'domain/queryDomain',method:'post',pageSize:20,toolbar:toolbar">
 	<thead>
 		<tr>
 			<th data-options="field:'ck',checkbox:true"></th>
 			<th data-options="field:'id',width:80,align:'center'">序号</th>
 			<th data-options="field:'domain',width:450,align:'center'">域名</th>
-			<th data-options="field:'source',width:150,align:'center'">数据来源</th>
-			<th data-options="field:'label',width:200,align:'center'">标签</th>
-			<th data-options="field:'type',width:100,align:'center'">类型</th>
+			<th data-options="field:'sourceId',width:150,align:'center',formatter:KindEditorUtil.findSourceName">数据来源</th>
+			<th data-options="field:'labelId',width:200,align:'center',formatter:KindEditorUtil.findLabelName">标签</th>
+			<th data-options="field:'typeId',width:100,align:'center',formatter:KindEditorUtil.findTypeName">类型</th>
 			<th data-options="field:'location',width:100,align:'center'">位置</th>
-			<th data-options="field:'time',width:200,align:'center'">时间</th>
+			<th data-options="field:'foundtime',width:200,align:'center'">时间</th>
 		</tr>
 	</thead>
 </table>
 <div id="domainEditWindow" class="easyui-window" title="编辑域名" data-options="modal:true,closed:true,iconCls:'icon-save',href:'/page/domain-edit'" style="width:80%;height:80%;padding:10px;">
 </div>
 <script>
-	$('#source').combobox({
-		url : 'source/category',
-		valueField : 'id',
-		textField : 'text',
-	});
-	$('#label').combobox({
-		url : 'label/category',
-		valueField : 'id',
-		textField : 'text',
-	});
 	function getSelectionsIds() {
 		var domainList = $("#domainList");
 		var sels = domainList.datagrid("getSelections");
@@ -94,7 +86,7 @@
 						rows : rows
 					}
 					DownLoadFile({
-						url : "/domain/downloadall",
+						url : "/domain/downloadCurrentData",
 						data : param
 					});
 				}
@@ -115,6 +107,7 @@
 									var params = {
 										"ids" : ids
 									};
+									console.log(params);
 									$.post("/domain/delete", params, function(
 											data) {
 										$.messager.alert('提示', '删除成功!',
